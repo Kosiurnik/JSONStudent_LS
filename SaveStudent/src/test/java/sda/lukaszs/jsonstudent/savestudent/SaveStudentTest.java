@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import sda.lukaszs.jsonstudent.studentmodel.Student;
 
@@ -18,6 +19,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 class SaveStudentTest {
+
+    @BeforeAll
+    static void createTestDirectory(){
+        if(!Files.exists(Paths.get("jsonTest"))){
+            try {
+                Files.createDirectory(Paths.get("jsonTest"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Test
     void saveJSON() {
@@ -47,8 +59,8 @@ class SaveStudentTest {
             e.printStackTrace();
         }
         assertThat(jsonString.equals(jsonString2)).isEqualTo(true);
-        SaveStudent.saveJSON("json/writeTest.json",student);
-        assertThat(Files.exists(Paths.get("json/writeTest.json"))).isEqualTo(true);
+        SaveStudent.saveJSON("jsonTest/writeTest.json",student);
+        assertThat(Files.exists(Paths.get("jsonTest/writeTest.json"))).isEqualTo(true);
     }
 
     @Test
@@ -97,17 +109,20 @@ class SaveStudentTest {
             e.printStackTrace();
         }
         assertThat(jsonString.equals(jsonString2)).isEqualTo(true);
-        SaveStudent.saveJSON("json/writeListTest.json",students);
-        assertThat(Files.exists(Paths.get("json/writeListTest.json"))).isEqualTo(true);
+        SaveStudent.saveJSON("jsonTest/writeListTest.json",students);
+        assertThat(Files.exists(Paths.get("jsonTest/writeListTest.json"))).isEqualTo(true);
     }
 
     @AfterAll
     static void removeFiles(){
         try{
-            if(Files.exists(Paths.get("json/writeTest.json")))
-                Files.delete(Paths.get("json/writeTest.json"));
-            if(Files.exists(Paths.get("json/writeListTest.json")))
-                Files.delete(Paths.get("json/writeListTest.json"));
+            if(Files.exists(Paths.get("jsonTest/writeTest.json")))
+                Files.delete(Paths.get("jsonTest/writeTest.json"));
+            if(Files.exists(Paths.get("jsonTest/writeListTest.json")))
+                Files.delete(Paths.get("jsonTest/writeListTest.json"));
+
+            if(Files.exists(Paths.get("jsonTest")))
+                Files.delete(Paths.get("jsonTest"));
         }catch (IOException e){
             e.printStackTrace();
         }

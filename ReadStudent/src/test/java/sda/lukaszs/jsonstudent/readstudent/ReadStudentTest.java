@@ -3,6 +3,7 @@ package sda.lukaszs.jsonstudent.readstudent;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import sda.lukaszs.jsonstudent.studentmodel.Student;
 
@@ -18,6 +19,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ReadStudentTest {
 
+    @BeforeAll
+    static void createTestDirectory(){
+        if(!Files.exists(Paths.get("jsonTest"))){
+            try {
+                Files.createDirectory(Paths.get("jsonTest"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Test
     void readFromJSON() {
         JsonFactory jFactory = new JsonFactory();
@@ -32,13 +44,13 @@ class ReadStudentTest {
             jsonGenerator.close();
             String jsonString = writer.toString();
             System.out.println(jsonString);
-            Files.write(Paths.get("json/readTest.json"),jsonString.getBytes());
+            Files.write(Paths.get("jsonTest/readTest.json"),jsonString.getBytes());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assertThat(Files.exists(Paths.get("json/readTest.json"))).isEqualTo(true);
-        Student student1 = ReadStudent.readFromJSON(new File("json/readTest.json"));
+        assertThat(Files.exists(Paths.get("jsonTest/readTest.json"))).isEqualTo(true);
+        Student student1 = ReadStudent.readFromJSON(new File("jsonTest/readTest.json"));
         Student student2 = new Student("testName","testLastName",111);
         assertThat(student1.equals(student2)).isEqualTo(true);
     }
@@ -73,13 +85,13 @@ class ReadStudentTest {
 
             String jsonString = writer.toString();
             System.out.println(jsonString);
-            Files.write(Paths.get("json/readListTest.json"),jsonString.getBytes());
+            Files.write(Paths.get("jsonTest/readListTest.json"),jsonString.getBytes());
         }catch(IOException e){
             e.printStackTrace();
         }
 
-        assertThat(Files.exists(Paths.get("json/readListTest.json"))).isEqualTo(true);
-        List<Student> students = ReadStudent.readListFromJSON(new File("json/readListTest.json"));
+        assertThat(Files.exists(Paths.get("jsonTest/readListTest.json"))).isEqualTo(true);
+        List<Student> students = ReadStudent.readListFromJSON(new File("jsonTest/readListTest.json"));
         assertThat(students.size()).isEqualTo(3);
         List<Student> students2 = new ArrayList<>();
         students2.add(new Student("testName1","testLastName1",111));
@@ -92,10 +104,13 @@ class ReadStudentTest {
     @AfterAll
     static void removeFiles(){
         try{
-            if(Files.exists(Paths.get("json/readTest.json")))
-                Files.delete(Paths.get("json/readTest.json"));
-            if(Files.exists(Paths.get("json/readListTest.json")))
-                Files.delete(Paths.get("json/readListTest.json"));
+            if(Files.exists(Paths.get("jsonTest/readTest.json")))
+                Files.delete(Paths.get("jsonTest/readTest.json"));
+            if(Files.exists(Paths.get("jsonTest/readListTest.json")))
+                Files.delete(Paths.get("jsonTest/readListTest.json"));
+
+            if(Files.exists(Paths.get("jsonTest")))
+                Files.delete(Paths.get("jsonTest"));
         }catch (IOException e){
             e.printStackTrace();
         }
